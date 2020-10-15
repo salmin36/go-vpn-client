@@ -2,7 +2,6 @@ package vpn
 
 import (
 	"encoding/base64"
-	_ "encoding/base64"
 	"errors"
 	"fmt"
 	"os"
@@ -22,7 +21,7 @@ type VpnConnectInterface interface {
 
 type VpnConnection struct {
 	url             string
-	listOfEndpoints []string
+	listOfEndpoints *map[string]string
 	configuration   *vpnConfiguration
 }
 
@@ -30,13 +29,26 @@ func NewVpnConnection() *VpnConnection {
 	fmt.Println("Starting factory method NewVpnConnection")
 	newVpn := new(VpnConnection)
 	newVpn.url = "google.com"
-	newVpn.listOfEndpoints = make([]string, 0)
 	newVpn.setupConfigurations()
 	return newVpn
 }
 
 func (v *VpnConnection) setupConfigurations() {
 	v.getConfigurationFromEnvironmentVaribales()
+	mapOfServers, err := FetchMapOfServers()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	} else {
+		v.listOfEndpoints = mapOfServers
+	}
+
+}
+
+func (v *VpnConnection) PrintListOfServers() {
+	for hostname, address := range *v.listOfEndpoints {
+		fmt.Println(hostname + " : " + address)
+	}
 }
 
 func (v *VpnConnection) getConfigurationFromEnvironmentVaribales() {
@@ -66,7 +78,6 @@ func (v *VpnConnection) getConfigurationFromEnvironmentVaribales() {
 }
 
 func (v *VpnConnection) GetListOfEndpoints() ([]string, error) {
-	fmt.Println("hhm")
 	return nil, nil
 }
 
