@@ -1,4 +1,4 @@
-# go-vpn-client
+# go-vpn-client [ WIP ]
  This client is used to connect linux computer to vpn
 
 # Prerequisites
